@@ -1,59 +1,95 @@
 # Battery Monitorer
 
-Battery Monitorer is an Android app for tracking battery behavior, visualizing trends, and giving practical battery-health insights.
+Battery Monitorer is a native Android application that collects battery telemetry on-device, builds battery behavior insights, and presents health-focused analytics with configurable alerts, retention, and export.
 
-## Current Scope
+## Repository Purpose
 
-- Real-time battery tracking (charge, temperature, charging state, signal, screen status).
-- Insights engine for drain anomalies and battery behavior.
-- Settings-driven customization (theme, dynamic colors, alerts, polling interval, charge limit).
-- Export flows (`CSV`, `JSON`, `PDF`) from Settings.
-- Usage history chart with labels and animation.
+This repository contains the complete Android client implementation, including:
 
-## Production Readiness Plan
+- battery data collection (foreground broadcast + background WorkManager polling)
+- local persistence and report aggregation
+- insight generation and notifications
+- settings, export, and visualization flows
+- release telemetry integration (Crashlytics + analytics breadcrumbs)
 
-This project should now prioritize quality/hardening before adding more features.
+## Key Features
 
-### What To Do Before Production
+- Live battery analytics (level, temperature, charging state, usage trends)
+- Insight engine for abnormal drain, thermal behavior, and low-battery coaching
+- Charge-limit notifications and charging session metrics
+- Configurable retention policy (auto-delete history, default 30 days)
+- Export in `CSV`, `JSON`, and `PDF`
+- Theme customization (dark mode, dynamic colors, accent color)
 
-1. **Stability pass**
-   - Run full QA matrix: cold start, rotate, background/foreground, reboot, permissions denied.
-   - Validate behavior when battery broadcast data is missing/partial.
+## Architecture
 
-2. **Crash/ANR monitoring**
-   - Add Firebase Crashlytics.
-   - Add analytics breadcrumbs for key flows (startup, worker schedule, export, navigation, settings changes).
+The project follows a feature-oriented, layered architecture:
 
-3. **Data reliability**
-   - Verify history/report generation over multiple days.
-   - Cover edge cases: no data, one sample, charging transitions.
+- **Presentation**
+  - Jetpack Compose UI
+  - State-driven screens (`BatteryScreen`, `SettingsScreen`)
+  - ViewModels for screen orchestration
 
-4. **Battery impact audit**
-   - Validate polling intervals and receiver behavior.
-   - Confirm app overhead remains low with background work enabled.
+- **Domain/Application**
+  - `BatteryTracker` for ingestion, alerts, cleanup triggers
+  - `InsightEngine` for battery intelligence rules
+  - `WorkManagerScheduler` for periodic polling
 
-5. **Export hardening**
-   - Test large datasets for `CSV`/`JSON`/`PDF`.
-   - Validate share targets and storage/IO exceptions.
+- **Data**
+  - Repository abstraction (`BatteryRepository`, `SettingsRepository`)
+  - Local persistence via Room + DataStore
+  - Export manager for file generation/share workflows
 
-6. **Play compliance/docs**
-   - Add privacy policy.
-   - Complete Play Data Safety form.
-   - Add disclosures for notifications and telemetry.
+- **Infrastructure**
+  - Hilt dependency injection
+  - WorkManager + Hilt Worker factory
+  - Firebase Crashlytics/Analytics telemetry hooks
 
-7. **UI consistency and accessibility**
-   - Replace remaining hardcoded strings/colors.
-   - Validate contrast, large font scaling, and TalkBack labels.
+## Tech Stack
 
-Detailed execution checklist: see `PRODUCTION_CHECKLIST.md`.
-QA execution matrix: see `QA_TEST_MATRIX.md`.
-Crash/ANR setup: see `FIREBASE_SETUP.md`.
+- Kotlin
+- Jetpack Compose (Material 3)
+- Hilt (DI)
+- Room (local DB)
+- DataStore (preferences/settings)
+- WorkManager (background jobs)
+- Firebase Crashlytics + Analytics
+- AndroidX Navigation 3
 
-## Add More Features Now?
+## Data Model
 
-- **For production:** prioritize quality/hardening over more features.
-- **For marketing differentiation:** add only 1-2 polished features after stabilization:
-  - battery degradation trend over weeks
-  - charging session history with best/worst sessions
+- `BatteryEntity`: raw battery samples with timestamp and device context
+- `DailyReportEntity`: aggregated daily summaries (drain/temp/signal/screen-time)
+- `AppSettings`: user-configurable app behavior and retention parameters
 
-Suggested roadmap: see `ROADMAP.md`.
+## Project Structure
+
+- `core/` app bootstrap, navigation, telemetry, theme
+- `feature/home/` battery dashboard, insights, history, reports
+- `feature/settings/` preferences, export configuration/actions
+- `storage/` Room database, DAO, entities, DI modules
+- `worker/` periodic background polling
+- `receiver/` battery broadcast handling
+
+## Build and Run
+
+### Requirements
+
+- Android Studio (latest stable)
+- JDK 11+
+- Android SDK matching project `compileSdk`
+
+### Setup
+
+1. Clone the repository.
+2. Add Firebase config file:
+   - `app/google-services.json`
+3. Sync Gradle and run the `app` module.
+
+## Operational Docs
+
+- Production checklist: `PRODUCTION_CHECKLIST.md`
+- QA matrix: `QA_TEST_MATRIX.md`
+- Firebase setup: `FIREBASE_SETUP.md`
+- Roadmap: `ROADMAP.md`
+- Privacy policy page: `privacy-policy.html`
