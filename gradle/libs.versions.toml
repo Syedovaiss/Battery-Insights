@@ -38,6 +38,7 @@ adaptive = "1.2.0"
 material3WindowSizeClass = "1.4.0"
 navigation3Ui = "1.1.0-alpha05"
 foundationLayout = "1.11.0"
+firebaseBom = "34.4.0"
 [libraries]
 androidx-compose-material-icons-core = { module = "androidx.compose.material:material-icons-core", version.ref = "materialIconsCore" }
 androidx-compose-material-icons-extended = { module = "androidx.compose.material:material-icons-extended", version.ref = "materialIconsCore" }
@@ -86,6 +87,9 @@ retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "converte
 retrofit2-kotlinx-serialization-converter = { module = "com.jakewharton.retrofit:retrofit2-kotlinx-serialization-converter", version.ref = "retrofit2KotlinxSerializationConverter" }
 timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }
 androidx-compose-foundation-layout = { group = "androidx.compose.foundation", name = "foundation-layout", version.ref = "foundationLayout" }
+firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }
+firebase-analytics = { module = "com.google.firebase:firebase-analytics" }
+firebase-crashlytics = { module = "com.google.firebase:firebase-crashlytics" }
 
 
 [plugins]
@@ -93,3 +97,5 @@ android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+google-services = { id = "com.google.gms.google-services", version = "4.4.4" }
+firebase-crashlytics = { id = "com.google.firebase.crashlytics", version = "3.0.6" }

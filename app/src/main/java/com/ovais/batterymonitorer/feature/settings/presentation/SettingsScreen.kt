@@ -221,6 +221,20 @@ fun SettingsScreen(
             }
 
             item {
+                SliderSettingCard(
+                    title = stringResource(R.string.settings_auto_delete_history_days),
+                    value = settings.autoDeleteHistoryDays.toFloat(),
+                    valueRange = 7f..120f,
+                    steps = 15,
+                    unit = " d",
+                    icon = Icons.Default.DeleteSweep,
+                    accentColor = accentColor,
+                    infoText = stringResource(R.string.settings_auto_delete_history_days_info),
+                    onValueChange = { viewModel.updateAutoDeleteHistoryDays(it.toInt()) }
+                )
+            }
+
+            item {
                 Button(
                     onClick = { showExportDialog = true },
                     modifier = Modifier.fillMaxWidth(),

@@ -8,6 +8,7 @@ data class AppSettings(
     val pollingIntervalMinutes: Int = 15,
     val enableAIPredictions: Boolean = true,
     val historyPointsCount: Int = 24,
+    val autoDeleteHistoryDays: Int = 30,
     val darkThemeEnabled: Boolean = true,
     val dynamicColorsEnabled: Boolean = true,
     val chargeLimitEnabled: Boolean = true,

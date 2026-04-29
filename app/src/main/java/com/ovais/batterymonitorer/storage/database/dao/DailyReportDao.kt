@@ -21,4 +21,7 @@ interface DailyReportDao {
 
     @Query("SELECT * FROM daily_reports ORDER BY date DESC")
     suspend fun getAllReports(): List<DailyReportEntity>
+
+    @Query("DELETE FROM daily_reports WHERE date < :cutoffDate")
+    suspend fun deleteOlderThanDate(cutoffDate: String)
 }

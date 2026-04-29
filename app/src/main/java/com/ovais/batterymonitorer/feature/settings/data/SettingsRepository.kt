@@ -24,6 +24,7 @@ class SettingsRepository @Inject constructor(
         val POLLING_INTERVAL = intPreferencesKey("polling_interval")
         val ENABLE_AI = booleanPreferencesKey("enable_ai")
         val HISTORY_POINTS = intPreferencesKey("history_points")
+        val AUTO_DELETE_HISTORY_DAYS = intPreferencesKey("auto_delete_history_days")
         val DARK_THEME = booleanPreferencesKey("dark_theme")
         val DYNAMIC_COLORS = booleanPreferencesKey("dynamic_colors")
         val CHARGE_LIMIT_ENABLED = booleanPreferencesKey("charge_limit_enabled")
@@ -39,6 +40,7 @@ class SettingsRepository @Inject constructor(
             pollingIntervalMinutes = prefs[Keys.POLLING_INTERVAL] ?: 15,
             enableAIPredictions = prefs[Keys.ENABLE_AI] ?: true,
             historyPointsCount = prefs[Keys.HISTORY_POINTS] ?: 24,
+            autoDeleteHistoryDays = prefs[Keys.AUTO_DELETE_HISTORY_DAYS] ?: 30,
             darkThemeEnabled = prefs[Keys.DARK_THEME] ?: true,
             dynamicColorsEnabled = prefs[Keys.DYNAMIC_COLORS] ?: true,
             chargeLimitEnabled = prefs[Keys.CHARGE_LIMIT_ENABLED] ?: true,
@@ -74,6 +76,10 @@ class SettingsRepository @Inject constructor(
         context.dataStore.edit { it[Keys.HISTORY_POINTS] = count.coerceIn(12, 48) }
     }
 
+    suspend fun updateAutoDeleteHistoryDays(days: Int) {
+        context.dataStore.edit { it[Keys.AUTO_DELETE_HISTORY_DAYS] = days.coerceIn(7, 365) }
+    }
+
     suspend fun updateDarkThemeEnabled(enabled: Boolean) {
         context.dataStore.edit { it[Keys.DARK_THEME] = enabled }
     }
@@ -99,6 +105,7 @@ class SettingsRepository @Inject constructor(
             it[Keys.POLLING_INTERVAL] = 15
             it[Keys.ENABLE_AI] = true
             it[Keys.HISTORY_POINTS] = 24
+            it[Keys.AUTO_DELETE_HISTORY_DAYS] = 30
             it[Keys.DARK_THEME] = true
             it[Keys.DYNAMIC_COLORS] = true
             it[Keys.CHARGE_LIMIT_ENABLED] = true

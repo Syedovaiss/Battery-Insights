@@ -9,6 +9,7 @@ import com.ovais.batterymonitorer.R
 import com.ovais.batterymonitorer.feature.engine.InsightEngine
 import com.ovais.batterymonitorer.feature.home.data.BatteryRepository
 import com.ovais.batterymonitorer.feature.settings.data.SettingsRepository
+import com.ovais.batterymonitorer.core.telemetry.AppTelemetry
 import com.ovais.batterymonitorer.storage.database.entity.BatteryEntity
 import com.ovais.batterymonitorer.storage.database.entity.DailyReportEntity
 import com.ovais.batterymonitorer.utils.showNotification
@@ -27,6 +28,7 @@ class BatteryTracker @Inject constructor(
     private val settingsRepository: SettingsRepository
 ) {
     private var hasNotifiedChargeLimitForCurrentSession: Boolean = false
+    private var lastHistoryCleanupAtMs: Long = 0L
     private var lastGeneralInsightAtMs: Long = 0L
     private var lastGeneralInsightKey: String? = null
     private var lastLowBatteryAlertAtMs: Long = 0L
@@ -36,6 +38,7 @@ class BatteryTracker @Inject constructor(
         const val GENERAL_INSIGHT_COOLDOWN_MS = 20 * 60 * 1000L
         const val LOW_BATTERY_COOLDOWN_MS = 25 * 60 * 1000L
         const val LOW_BATTERY_RENOTIFY_DROP_PERCENT = 3
+        const val HISTORY_CLEANUP_INTERVAL_MS = 12 * 60 * 60 * 1000L
     }
 
     suspend fun trackBatteryChange(intent: Intent) {
@@ -69,6 +72,7 @@ class BatteryTracker @Inject constructor(
         repository.insert(entity)
 
         val settings = settingsRepository.settingsFlow.first()
+        maybeCleanupHistory(settings.autoDeleteHistoryDays)
         // Charge-limit alert (AccuBattery-like)
         if (settings.notificationsEnabled && settings.chargeLimitEnabled) {
             if (isCharging && percent >= settings.chargeLimitPercent) {
@@ -76,6 +80,10 @@ class BatteryTracker @Inject constructor(
                     showNotification(
                         context,
                         "Charge reached ${settings.chargeLimitPercent}%. Unplug now to reduce battery wear."
+                    )
+                    AppTelemetry.breadcrumb(
+                        "charge_limit_alert",
+                        mapOf("limit" to settings.chargeLimitPercent.toString())
                     )
                     hasNotifiedChargeLimitForCurrentSession = true
                 }
@@ -111,9 +119,21 @@ class BatteryTracker @Inject constructor(
                 }
                 if (shouldNotify) {
                     showNotification(context, "$title: $desc")
+                    AppTelemetry.breadcrumb(
+                        "insight_notification",
+                        mapOf("title_res" to it.titleRes.toString())
+                    )
                 }
             }
         }
+    }
+
+    private suspend fun maybeCleanupHistory(retentionDays: Int) {
+        val now = System.currentTimeMillis()
+        if (now - lastHistoryCleanupAtMs < HISTORY_CLEANUP_INTERVAL_MS) return
+        repository.purgeHistoryOlderThan(retentionDays)
+        lastHistoryCleanupAtMs = now
+        AppTelemetry.breadcrumb("history_cleanup", mapOf("retention_days" to retentionDays.toString()))
     }
 
     private fun shouldNotifyGeneralInsight(insightKey: String, nowMs: Long): Boolean {

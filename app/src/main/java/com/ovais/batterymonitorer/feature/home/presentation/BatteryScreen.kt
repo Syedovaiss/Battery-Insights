@@ -241,70 +241,12 @@ fun BatteryScreen(
                     if (state.healthPredictionRes != 0) {
                         HealthPredictionCard(
                             stringResource(state.healthPredictionRes, *state.healthPredictionArgs.toTypedArray()),
-                            accentColor = accentColor
                         )
                     }
                 }
                 
                 item {
                     Spacer(Modifier.height(40.dp))
-                }
-            }
-        }
-    }
-}
-
-@Composable
-fun ExportDataCard(
-    status: ExportStatus,
-    onExport: () -> Unit,
-    accentColor: Color
-) {
-    Card(
-        modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(20.dp),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
-    ) {
-        Row(
-            modifier = Modifier.padding(16.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    text = stringResource(R.string.export_battery_data),
-                    style = MaterialTheme.typography.bodyLarge,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onSurface
-                )
-                Text(
-                    text = stringResource(R.string.export_history_csv),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.65f)
-                )
-            }
-            
-            Button(
-                onClick = onExport,
-                enabled = status == ExportStatus.IDLE,
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = accentColor.copy(alpha = 0.1f),
-                    contentColor = accentColor
-                ),
-                shape = RoundedCornerShape(12.dp)
-            ) {
-                if (status == ExportStatus.LOADING) {
-                    CircularProgressIndicator(modifier = Modifier.size(20.dp), strokeWidth = 2.dp, color = accentColor)
-                } else {
-                    Icon(Icons.Default.FileDownload, contentDescription = null, modifier = Modifier.size(20.dp))
-                    Spacer(Modifier.width(8.dp))
-                    Text(
-                        text = if (status == ExportStatus.SUCCESS) {
-                            stringResource(R.string.export_done)
-                        } else {
-                            stringResource(R.string.export_action)
-                        }
-                    )
                 }
             }
         }
@@ -1093,7 +1035,7 @@ fun WeeklyAggregatedReportCard(reports: List<DailyReportEntity>, accentColor: Co
 }
 
 @Composable
-fun HealthPredictionCard(prediction: String, accentColor: Color) {
+fun HealthPredictionCard(prediction: String) {
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(24.dp),

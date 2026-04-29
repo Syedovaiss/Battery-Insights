@@ -23,6 +23,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import com.ovais.batterymonitorer.core.navigation.MonitoringNavigation
+import com.ovais.batterymonitorer.core.telemetry.AppTelemetry
 import com.ovais.batterymonitorer.core.ui.theme.BatteryMonitorerTheme
 import com.ovais.batterymonitorer.feature.home.domain.BatteryTracker
 import com.ovais.batterymonitorer.feature.settings.data.SettingsRepository
@@ -42,6 +43,7 @@ class MonitoringActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        AppTelemetry.breadcrumb("monitoring_activity_create")
         enableEdgeToEdge()
         setContent {
             val settings = settingsRepository.settingsFlow.collectAsStateWithLifecycle(initialValue = null).value
@@ -88,6 +90,10 @@ class MonitoringActivity : ComponentActivity() {
                         ) != PackageManager.PERMISSION_GRANTED
                     }
                     if (toRequest.isNotEmpty()) {
+                        AppTelemetry.breadcrumb(
+                            "permissions_requested",
+                            mapOf("count" to toRequest.size.toString())
+                        )
                         launcher.launch(toRequest.toTypedArray())
                     }
                 }

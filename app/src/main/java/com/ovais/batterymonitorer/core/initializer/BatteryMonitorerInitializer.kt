@@ -7,7 +7,6 @@ import timber.log.Timber
 class BatteryMonitorerInitializer : Initializer<Unit> {
 
     override fun create(context: Context) {
-        // Initialize Timber
         Timber.plant(Timber.DebugTree())
         Timber.d("BatteryMonitorerInitializer: Initializing...")
     }

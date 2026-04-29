@@ -4,6 +4,8 @@ plugins {
     id("com.google.dagger.hilt.android")
     id("com.google.devtools.ksp")
     alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.google.services)
+    alias(libs.plugins.firebase.crashlytics)
 }
 
 android {
@@ -86,4 +88,9 @@ dependencies {
     implementation(libs.timber)
     // Datastore
     implementation(libs.androidx.datastore.preferences)
+
+    // Firebase (Crash/ANR monitoring + breadcrumbs via analytics)
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.analytics)
+    implementation(libs.firebase.crashlytics)
 }

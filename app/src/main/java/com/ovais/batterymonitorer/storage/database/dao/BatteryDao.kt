@@ -19,4 +19,6 @@ interface BatteryDao {
     @Query("SELECT * FROM battery_data")
     suspend fun getAllOnce(): List<BatteryEntity>
 
+    @Query("DELETE FROM battery_data WHERE timestamp < :cutoffTimestamp")
+    suspend fun deleteOlderThan(cutoffTimestamp: Long)
 }

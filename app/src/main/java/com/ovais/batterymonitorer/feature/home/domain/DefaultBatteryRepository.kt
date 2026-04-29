@@ -13,10 +13,13 @@ import com.ovais.batterymonitorer.storage.database.entity.BatteryEntity
 import com.ovais.batterymonitorer.storage.database.entity.DailyReportEntity
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 import javax.inject.Inject
 
 class DefaultBatteryRepository @Inject constructor(
-    @ApplicationContext private val context: Context,
+    @param:ApplicationContext private val context: Context,
     private val dao: BatteryDao,
     private val reportDao: DailyReportDao
 ) : BatteryRepository {
@@ -36,6 +39,15 @@ class DefaultBatteryRepository @Inject constructor(
     override suspend fun getAllOnce(): List<BatteryEntity> = dao.getAllOnce()
 
     override suspend fun getAllReportsOnce(): List<DailyReportEntity> = reportDao.getAllReports()
+
+    override suspend fun purgeHistoryOlderThan(retentionDays: Int) {
+        val safeDays = retentionDays.coerceIn(3, 365)
+        val cutoffTimestamp = System.currentTimeMillis() - safeDays * 24L * 60L * 60L * 1000L
+        dao.deleteOlderThan(cutoffTimestamp)
+
+        val cutoffDate = SimpleDateFormat("yyyy-MM-dd", Locale.US).format(Date(cutoffTimestamp))
+        reportDao.deleteOlderThanDate(cutoffDate)
+    }
 
     override suspend fun refreshBatteryState() {
         val intent = context.registerReceiver(null, IntentFilter(Intent.ACTION_BATTERY_CHANGED))

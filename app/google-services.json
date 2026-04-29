@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1041297389761",
+    "project_id": "battery-insights-412cd",
+    "storage_bucket": "battery-insights-412cd.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1041297389761:android:ecdde9c93aa5fb6d5e3c40",
+        "android_client_info": {
+          "package_name": "com.ovais.batterymonitorer"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDH8E7EH1i1Bu_KC6WnEcyPD0RSKPZgotY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

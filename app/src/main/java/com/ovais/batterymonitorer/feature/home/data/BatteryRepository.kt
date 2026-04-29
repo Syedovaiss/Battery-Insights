@@ -11,5 +11,6 @@ interface BatteryRepository {
     suspend fun insertReport(report: DailyReportEntity)
     suspend fun getAllOnce(): List<BatteryEntity>
     suspend fun getAllReportsOnce(): List<DailyReportEntity>
+    suspend fun purgeHistoryOlderThan(retentionDays: Int)
     suspend fun refreshBatteryState()
 }
