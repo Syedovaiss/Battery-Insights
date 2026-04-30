@@ -1,4 +1,4 @@
-# Battery Monitorer
+# Battery Insights
 
 Battery Monitorer is a native Android application that collects battery telemetry on-device, builds battery behavior insights, and presents health-focused analytics with configurable alerts, retention, and export.
 
