@@ -6,22 +6,24 @@ import androidx.work.Configuration
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.ovais.batterymonitorer.core.telemetry.AppContextHolder
 import com.ovais.batterymonitorer.core.telemetry.AppTelemetry
-import com.ovais.batterymonitorer.worker.WorkManagerScheduler
+import dagger.hilt.EntryPoint
+import dagger.hilt.EntryPoints
+import dagger.hilt.InstallIn
 import dagger.hilt.android.HiltAndroidApp
-import javax.inject.Inject
+import dagger.hilt.components.SingletonComponent
 
 @HiltAndroidApp
 class BatteryMonitorer : Application(), Configuration.Provider {
 
-    @Inject
-    lateinit var workerFactory: HiltWorkerFactory
-
-    @Inject
-    lateinit var scheduler: WorkManagerScheduler
+    @EntryPoint
+    @InstallIn(SingletonComponent::class)
+    interface WorkManagerEntryPoint {
+        fun workerFactory(): HiltWorkerFactory
+    }
 
     override val workManagerConfiguration: Configuration
         get() = Configuration.Builder()
-            .setWorkerFactory(workerFactory)
+            .setWorkerFactory(EntryPoints.get(this, WorkManagerEntryPoint::class.java).workerFactory())
             .build()
 
     override fun onCreate() {
@@ -29,6 +31,5 @@ class BatteryMonitorer : Application(), Configuration.Provider {
         AppContextHolder.init(this)
         FirebaseCrashlytics.getInstance().isCrashlyticsCollectionEnabled = true
         AppTelemetry.breadcrumb("app_start")
-        scheduler.scheduleBatteryPolling(15)
     }
 }

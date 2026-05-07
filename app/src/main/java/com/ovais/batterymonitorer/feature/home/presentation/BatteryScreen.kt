@@ -96,7 +96,7 @@ fun BatteryScreen(
                     .padding(horizontal = 20.dp),
                 verticalArrangement = Arrangement.spacedBy(20.dp)
             ) {
-                item {
+                item(key = "header_spacer") {
                     Spacer(Modifier.height(40.dp))
                     Row(
                         modifier = Modifier.fillMaxWidth(),
@@ -120,11 +120,15 @@ fun BatteryScreen(
                     }
                 }
 
-                item {
+                item(key = "main_dashboard") {
                     MainDashboardCard(state, accentColor)
                 }
 
-                item {
+                item(key = "live_meter") {
+                    LiveMeterCard(state.currentNow, state.voltage, accentColor)
+                }
+
+                item(key = "health_card") {
                     BatteryHealthCard(
                         healthScore = state.batteryHealthScore,
                         accentColor = accentColor
@@ -132,7 +136,7 @@ fun BatteryScreen(
                 }
 
                 if (state.isCharging) {
-                    item {
+                    item(key = "charging_session") {
                         ChargingSessionCard(
                             minutes = state.activeChargeSessionMinutes,
                             gainPercent = state.activeChargeSessionGainPercent,
@@ -142,7 +146,7 @@ fun BatteryScreen(
                     }
                 }
 
-                item {
+                item(key = "eco_advice") {
                     EcoAdviceCard(
                         advice = if (state.ecoAdviceRes != 0) {
                             stringResource(state.ecoAdviceRes, *state.ecoAdviceArgs.toTypedArray())
@@ -151,11 +155,11 @@ fun BatteryScreen(
                     )
                 }
 
-                item {
+                item(key = "battery_graph") {
                     BatteryGraph(state.history, accentColor)
                 }
 
-                item {
+                item(key = "app_usage") {
                     AppBatteryUsageCard(
                         accentColor = accentColor,
                         onOpenSystemBatteryUsage = {
@@ -164,7 +168,7 @@ fun BatteryScreen(
                     )
                 }
 
-                item {
+                item(key = "simulator") {
                     SimulatorCard(
                         screenTime = state.simulatorScreenTimeHours,
                         locationOn = state.simulatorLocationOn,
@@ -179,7 +183,7 @@ fun BatteryScreen(
                     )
                 }
 
-                item {
+                item(key = "insights_header") {
                     Text(
                         text = stringResource(R.string.battery_insights),
                         style = MaterialTheme.typography.titleLarge,
@@ -188,12 +192,15 @@ fun BatteryScreen(
                     )
                 }
 
-                items(state.insights) { insight ->
+                items(
+                    items = state.insights,
+                    key = { it.titleRes }
+                ) { insight ->
                     InsightCard(insight, accentColor)
                 }
 
                 if (state.recentReports.isNotEmpty()) {
-                    item {
+                    item(key = "reports_header") {
                         Row(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.SpaceBetween,
@@ -228,7 +235,7 @@ fun BatteryScreen(
                         }
                     }
 
-                    item {
+                    item(key = "reports_list") {
                         if (state.reportFilter == ReportFilter.DAILY) {
                             WeeklyReportCard(state.recentReports, accentColor)
                         } else {
@@ -237,7 +244,7 @@ fun BatteryScreen(
                     }
                 }
                 
-                item {
+                item(key = "health_prediction") {
                     if (state.healthPredictionRes != 0) {
                         HealthPredictionCard(
                             stringResource(state.healthPredictionRes, *state.healthPredictionArgs.toTypedArray()),
@@ -245,11 +252,78 @@ fun BatteryScreen(
                     }
                 }
                 
-                item {
+                item(key = "bottom_spacer") {
                     Spacer(Modifier.height(40.dp))
                 }
             }
         }
+    }
+}
+
+@Composable
+fun LiveMeterCard(
+    currentNow: Int,
+    voltage: Int,
+    accentColor: Color
+) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(20.dp),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
+    ) {
+        Row(
+            modifier = Modifier.padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = "Live Meter",
+                    style = MaterialTheme.typography.bodyLarge,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+                Text(
+                    text = "Real-time electrical stats",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.65f)
+                )
+            }
+            
+            Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+                MetricItem(
+                    value = "${currentNow / 1000} mA",
+                    label = "Current",
+                    accentColor = if (currentNow < 0) Color(0xFFFF5252) else Color(0xFF4CAF50)
+                )
+                MetricItem(
+                    value = "${voltage} mV",
+                    label = "Voltage",
+                    accentColor = accentColor
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun MetricItem(
+    value: String,
+    label: String,
+    accentColor: Color
+) {
+    Column(horizontalAlignment = Alignment.End) {
+        Text(
+            text = value,
+            style = MaterialTheme.typography.titleMedium,
+            fontWeight = FontWeight.Bold,
+            color = accentColor
+        )
+        Text(
+            text = label,
+            style = MaterialTheme.typography.labelSmall,
+            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.65f)
+        )
     }
 }
 

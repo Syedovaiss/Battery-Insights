@@ -11,5 +11,7 @@ data class BatteryEntity(
     val temperature: Float,
     val isCharging: Boolean,
     val isScreenOn: Boolean = false,
-    val signalStrength: Int = -1 // -1 if unknown, otherwise 0-4 or dBM
+    val signalStrength: Int = -1, // -1 if unknown, otherwise 0-4 or dBM
+    val voltage: Int = 0,       // in mV
+    val currentNow: Int = 0     // in mA
 )

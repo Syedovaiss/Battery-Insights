@@ -25,7 +25,7 @@ import javax.inject.Inject
 class BatteryViewModel @Inject constructor(
     private val repo: BatteryRepository,
     private val settingsRepo: SettingsRepository,
-    @ApplicationContext private val context: Context
+    @param:ApplicationContext private val context: Context
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(BatteryState())
@@ -160,6 +160,8 @@ class BatteryViewModel @Inject constructor(
                     timeToEmptyMinutes = timeToEmpty,
                     timeToFullMinutes = timeToFull,
                     batteryHealthScore = batteryHealthScore,
+                    currentNow = latest.currentNow,
+                    voltage = latest.voltage,
                     activeChargeSessionMinutes = chargeSessionStats.sessionMinutes,
                     activeChargeSessionGainPercent = chargeSessionStats.gainPercent,
                     activeChargeSpeedPercentPerHour = chargeSessionStats.speedPerHour,

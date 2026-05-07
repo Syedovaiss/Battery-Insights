@@ -61,13 +61,19 @@ class BatteryTracker @Inject constructor(
 
         val percent = if (level != -1 && scale != -1) (level * 100f / scale) else 0f
 
+        val batteryManager = context.getSystemService(Context.BATTERY_SERVICE) as BatteryManager
+        val currentNow = batteryManager.getIntProperty(BatteryManager.BATTERY_PROPERTY_CURRENT_NOW)
+        val voltage = intent.getIntExtra(BatteryManager.EXTRA_VOLTAGE, 0)
+
         val entity = BatteryEntity(
             timestamp = System.currentTimeMillis(),
             level = percent,
             temperature = temp,
             isCharging = isCharging,
             isScreenOn = isScreenOn,
-            signalStrength = signalStrength
+            signalStrength = signalStrength,
+            voltage = voltage,
+            currentNow = currentNow
         )
         repository.insert(entity)
 

@@ -72,6 +72,10 @@ class DefaultBatteryRepository @Inject constructor(
                 -1
             }
 
+            val batteryManager = context.getSystemService(Context.BATTERY_SERVICE) as BatteryManager
+            val currentNow = batteryManager.getIntProperty(BatteryManager.BATTERY_PROPERTY_CURRENT_NOW)
+            val voltage = intent.getIntExtra(BatteryManager.EXTRA_VOLTAGE, 0)
+
             dao.insert(
                 BatteryEntity(
                     timestamp = System.currentTimeMillis(),
@@ -79,7 +83,9 @@ class DefaultBatteryRepository @Inject constructor(
                     temperature = tempValue,
                     isCharging = isChargingValue,
                     isScreenOn = isScreenOnValue,
-                    signalStrength = signalStrengthValue
+                    signalStrength = signalStrengthValue,
+                    voltage = voltage,
+                    currentNow = currentNow
                 )
             )
         }

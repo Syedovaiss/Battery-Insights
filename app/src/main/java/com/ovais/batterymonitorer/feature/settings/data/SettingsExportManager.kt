@@ -16,7 +16,7 @@ import javax.inject.Singleton
 
 @Singleton
 class SettingsExportManager @Inject constructor(
-    @ApplicationContext private val context: Context,
+    @param:ApplicationContext private val context: Context,
     private val batteryRepository: BatteryRepository
 ) {
     suspend fun export(format: ExportFormat) {

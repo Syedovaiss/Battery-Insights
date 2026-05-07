@@ -14,7 +14,7 @@ private val Context.dataStore by preferencesDataStore(name = "settings")
 
 @Singleton
 class SettingsRepository @Inject constructor(
-    @ApplicationContext private val context: Context
+    @param:ApplicationContext private val context: Context
 ) {
     private object Keys {
         val LOW_BATTERY_THRESHOLD = intPreferencesKey("low_battery_threshold")

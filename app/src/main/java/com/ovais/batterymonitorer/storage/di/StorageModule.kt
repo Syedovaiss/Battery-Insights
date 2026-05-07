@@ -24,6 +24,7 @@ object StorageModule {
             BatteryDatabase::class.java,
             "battery_db"
         )
+            .addMigrations(BatteryDatabase.MIGRATION_3_4)
             .fallbackToDestructiveMigration(true)
             .build()
     }

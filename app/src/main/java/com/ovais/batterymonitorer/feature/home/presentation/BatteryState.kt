@@ -27,6 +27,8 @@ data class BatteryState(
     val exportStatus: ExportStatus = ExportStatus.IDLE,
     val reportFilter: ReportFilter = ReportFilter.DAILY,
     val batteryHealthScore: Int = 100,
+    val currentNow: Int = 0,
+    val voltage: Int = 0,
     val activeChargeSessionMinutes: Int = 0,
     val activeChargeSessionGainPercent: Int = 0,
     val activeChargeSpeedPercentPerHour: Float = 0f,
